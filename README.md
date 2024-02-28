@@ -63,3 +63,43 @@ Recipe-Generator is a GUI application where you can generate any recipe by searc
 ## 🛠 Built With <a name="built-with"></a>
 
 ### Tech Stack <a name="tech-stack"></a>
+
+<details>
+  <summary>Client</summary>
+  <ul>
+    <li><a href="https://docs.python.org/3/library/tkinter.html">Tkinter</a></li>
+  </ul>
+</details>
+
+
+
+<details>
+<summary>Database</summary>
+  <ul>
+    <li><a href="https://www.sqlite.org/">sqlite3</a></li>
+  </ul>
+</details>
+
+<!-- Features -->
+
+### Key Features <a name="key-features"></a>
+
+- Recipe Generation
+- Recipe Contribution
+- Search Functionality
+
+
+
+<!-- GETTING STARTED -->
+
+## 💻 Getting Started <a name="getting-started"></a>
+
+To get a local copy up and running, follow these steps.
+
+### Prerequisites
+
+In order to run this project you need to have following Installed:
+
+-[Python3](https://www.python.org/downloads/)
+-[VScode](https://code.visualstudio.com/download)
+
