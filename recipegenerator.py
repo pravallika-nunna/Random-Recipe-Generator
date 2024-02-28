@@ -3,7 +3,6 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 import sqlite3
 
-
 def add_recipe():
 
     # Create the 'Recipes' table if it doesn't exist
@@ -87,6 +86,8 @@ def add_recipe():
     new_window = Toplevel(root)
     new_window.title("Add Recipe")
     new_window.geometry("600x400+340+160")
+
+    
 
     # Your other GUI elements here
     recipe_name_label = Label(new_window, text="Enter Recipe Name:")
@@ -183,42 +184,64 @@ def fetch_recipe():
     # Set the current page to the generated page
     generated_pages.append(generated_page)
 
+class Application(Frame):
+    def __init__(self, master=None):
+        super().__init__(master)
+        self.master = master
+        self.master.title("Random Recipe Generator")
+        self.master.geometry("600x400+340+160")
+        self.create_widgets()
 
-class Home():
-    def __init__(self,app):
-         # Load and resize the background image
-        bg_image = Image.open(r"C:\Users\user\OneDrive\Desktop\recipe\recipe\logo.png")  
-        bg_image = bg_image.resize((650, 400))  
-        self.bg_image = ImageTk.PhotoImage(bg_image)
-
-        # Create a label to display the background image
-        self.bg_label = Label(app, image=self.bg_image)
+    def create_widgets(self):
+        self.bg_image = self.load_image("logo.png", (650, 400))
+        self.bg_label = Label(self.master, image=self.bg_image)
         self.bg_label.place(x=0, y=0, relwidth=1, relheight=1)
 
-# Create main window
-root = Tk()
-root.title("Random Recipe Generator")
-home = Home(root)
+        self.heading_label = Label(self.master, text="Random Recipe Generator", font=("Times New Roman", 20, "bold"), bg="white")
+        self.heading_label.place(x=250, y=0)
 
-#Heading
-heading_label = Label(root, text = "Random Recipe Generator", font=("Times New Roman", 20, "bold"),bg="white")
-heading_label.place(x=250,y=0)
+        self.add_button = Button(self.master, text="Add a Recipe", command=self.add_recipe)
+        self.add_button.place(x=450, y=100)
 
-# Set window dimensions and position
-window_width = 600
-window_height = 400
-screen_width = root.winfo_screenwidth()
-screen_height = root.winfo_screenheight()
-x_position = (screen_width - window_width) // 2
-y_position = (screen_height - window_height) // 2
-root.geometry(f"{window_width}x{window_height}+{x_position}+{y_position}")
+        self.find_button = Button(self.master, text="Find a Recipe", command=self.find_recipe)
+        self.find_button.place(x=450, y=160)
 
-# Add buttons
-add_button = Button(root, text="Add a Recipe", command = add_recipe)
-add_button.place(x=450,y=100)
+    def load_image(self, path, size):
+        bg_image = Image.open(path)
+        bg_image = bg_image.resize(size)
+        return ImageTk.PhotoImage(bg_image)
 
-find_button = Button(root, text="Find a Recipe", command = find_recipe)
-find_button.place(x=450,y=160)
+    def add_recipe(self):
+        add_recipe_window = Toplevel(self.master)
+        add_recipe_window.title("Add Recipe")
+        add_recipe_window.geometry("600x400+340+160")
+        self.add_bg_image(add_recipe_window)
 
-# Run the application
-root.mainloop()
+        # Your add_recipe GUI elements here
+
+    def find_recipe(self):
+        find_recipe_window = Toplevel(self.master)
+        find_recipe_window.title("Find Recipe")
+        find_recipe_window.geometry("600x400+340+160")
+        self.add_bg_image(find_recipe_window)
+
+        # Your find_recipe GUI elements here
+
+    def add_bg_image(self, window):
+        bg_label = Label(window, image=self.bg_image)
+        bg_label.place(x=0, y=0, relwidth=1, relheight=1)
+
+def main():
+    root = Tk()
+    app = Application(master=root)
+    app.mainloop()
+
+    # Add buttons
+    add_button = Button(root, text="Add a Recipe", command = add_recipe)
+    add_button.place(x=450,y=100)
+
+    find_button = Button(root, text="Find a Recipe", command = find_recipe)
+    find_button.place(x=450,y=160)
+
+if __name__ == "__main__":
+    main()
