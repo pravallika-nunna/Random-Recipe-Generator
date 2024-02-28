@@ -103,3 +103,7 @@ In order to run this project you need to have following Installed:
 -[Python3](https://www.python.org/downloads/)
 -[VScode](https://code.visualstudio.com/download)
 
+### Setup
+
+Clone this repository to your desired folder:
+git clone https://github.com/preethi05/recipe/https://gitlab.com/sample3105008/recipe
