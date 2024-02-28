@@ -30,7 +30,7 @@ After you're finished please remove all the comments and instructions!
   <img src="logo.jpeg" alt="logo" width="140"  height="auto" />
   <br/>
 
-  <h3><b>Microverse README Template</b></h3>
+  <h3><b>Recipe Generator Template</b></h3>
 
 </div>
 
@@ -58,7 +58,7 @@ After you're finished please remove all the comments and instructions!
 
 # 📖 [Recipe-Generator] <a name="about-project"></a>
 
-Recipe-Generator is a web site where you can generate any recipe by searching through name or any major ingredient.You can also add any recipe by adding it's name ,it's ingredients and it's instructions.
+Recipe-Generator is a GUI application where you can generate any recipe by searching through name or any major ingredient.You can also add any recipe by adding it's name ,it's ingredients and it's instructions.
 
 ## 🛠 Built With <a name="built-with"></a>
 
