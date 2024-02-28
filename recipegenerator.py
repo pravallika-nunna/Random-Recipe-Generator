@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import ttk
+from tkinter import ttk, messagebox
 from PIL import Image, ImageTk
 import sqlite3
 
@@ -34,6 +34,7 @@ def add_recipe():
         add_another_window = Toplevel(root)
         add_another_window.title("Recipe Added")
         add_another_window.geometry("600x400+340+160")
+        add_another_window.resizable(False, False)
 
         # Label to prompt user
         prompt_label = Label(add_another_window, text="Recipe added successfully!\nDo you want to add another recipe or view added recipes?")
@@ -58,6 +59,7 @@ def add_recipe():
         view_recipes_window = Toplevel(root)
         view_recipes_window.title("View Added Recipes")
         view_recipes_window.geometry("1080x1080+340+160")
+        view_recipes_window.resizable(False, False)
 
         # Create Treeview widget
         tree = ttk.Treeview(view_recipes_window)
@@ -78,7 +80,7 @@ def add_recipe():
         tree.pack(expand=True, fill=BOTH)
 
         # Button to close the window
-        close_button = Button(view_recipes_window, text="Close", command=view_recipes_window.destroy)
+        close_button = Button(view_recipes_window, text="Back", command=view_recipes_window.destroy)
         close_button.pack()
 
         # Update ingredient list in find_recipe function if necessary
@@ -86,8 +88,7 @@ def add_recipe():
     new_window = Toplevel(root)
     new_window.title("Add Recipe")
     new_window.geometry("600x400+340+160")
-
-    
+    new_window.resizable(False, False)
 
     # Your other GUI elements here
     recipe_name_label = Label(new_window, text="Enter Recipe Name:")
@@ -114,134 +115,116 @@ def add_recipe():
     browse_button = Button(new_window, text="Submit", command = add_recipe_to_db)
     browse_button.place(x=205,y=180)
     
-    home_button = Button(new_window, text="Home", command = new_window.destroy)
-    home_button.place(x=0,y=0)
+    home_button = Button(new_window, text="Back", command = new_window.destroy)
+    home_button.place(x=10,y=10)
 
 def find_recipe():
+    def search_recipe():
+        query = text_widget.get("1.0", "end-1c").strip().lower()  # Get user input and convert to lowercase
+        if not query:
+            messagebox.showerror("Error", "Please enter an ingredient or recipe title to search.")
+            return
+
+        # Connect to the database and execute the query
+        con = sqlite3.connect("ingredients_recipe.db")
+        cursor = con.cursor()
+        cursor.execute("SELECT * FROM Ingredients_and_Recipe_Dataset")
+        all_recipes = cursor.fetchall()
+        con.close()
+
+        # Process the input query
+        query_keywords = query.split(',')
+
+        # Search for matching recipes
+        found_recipes = []
+        for recipe in all_recipes:
+            recipe_name = recipe[1].lower()
+            ingredients = recipe[2].lower().split(',')
+            instructions = recipe[3].lower()
+            # Check if any ingredient or recipe title matches
+            if any(keyword.strip() in recipe_name or keyword.strip() in ingredients for keyword in query_keywords):
+                found_recipes.append(recipe)
+
+        if not found_recipes:
+            messagebox.showinfo("No Results", "No recipes found matching the search criteria.")
+        else:
+            # Display found recipes in a new window
+            result_window = Toplevel(root)
+            result_window.title("Search Results")
+            result_window.geometry("600x400+340+160")
+            result_window.resizable(False, False)
+
+            result_text = Text(result_window, width=60, height=20)
+            result_text.pack()
+
+            for recipe in found_recipes:
+                result_text.insert(END, f"Recipe Name: {recipe[1]}\nIngredients: {recipe[2]}\nInstructions: {recipe[3]}\n\n")
+
     new_window = Toplevel(root)
-
-    # Create a database connection
-    conn = sqlite3.connect("ingredients_recipe.db")
-
-    # Create a cursor object to execute SQL commands
-    cursor = conn.cursor()
-
-    # Function to update the ingredient list
-    def add_ingredient():
-        ingredient_listbox.delete(0, END)
-        for ingredient in receipes:
-            ingredient_listbox.insert(END, ingredient)
-
     new_window.title("Find Recipe")
     new_window.geometry("600x400+340+160")
-    
-    home_button = Button(new_window, text="Home", command = new_window.destroy)
-    home_button.place(x = 10, y = 10)
+    new_window.resizable(False, False)
+
+    home_button = Button(new_window, text="Back", command=new_window.destroy)
+    home_button.place(x=10, y=10)
 
     # Your other GUI elements here
     label = Label(new_window, text="Search Here :")
-    label.place(x=115 , y=50)
+    label.place(x=125, y=60)
 
     # Ingredient Entry
     ingredient_label = Label(new_window, text="(Enter an Ingredient / Recipe name)")
-    ingredient_label.place(x=80,y=80)
+    ingredient_label.place(x=100, y=100)
 
     # Create a Text widget to display file contents
-    text_widget = Text(new_window , width=15, height=1)
-    text_widget.place(x=205,y=50)
-       
+    text_widget = Text(new_window, width=15, height=1)
+    text_widget.place(x=215, y=60)
+
     # Buttons
-    generate_button = Button(new_window, text="Generate Recipe", command = fetch_recipe)
-    generate_button.place(x=205, y=125)
+    generate_button = Button(new_window, text="Generate Recipe", command=search_recipe)
+    generate_button.place(x=205, y=145)
 
     root.mainloop()
 
-def fetch_recipe():
+class Home():
+    def __init__(self,app):
+         # Load and resize the background image
+        bg_image = Image.open("logo.png")  
+        bg_image = bg_image.resize((650, 400))  
+        self.bg_image = ImageTk.PhotoImage(bg_image)
 
-    generated_pages = []
-
-    # Your logic to generate recipe content
-    recipe_content = "This is a generated recipe."
-
-    # Create a new page for displaying generated content
-    generated_page = Toplevel(root)
-    generated_page.geometry('600x400+340+160')
-
-
-    # Configure GUI elements on the generated page
-    recipe_label = Label(generated_page, text=f"Generated Recipe:\n{recipe_content}")
-    recipe_label.pack()
-
-    ingredient_list_label = Label(generated_page, text="Recipes:")
-    ingredient_list_label.place(x=235,y=35)
-    ingredient_listbox = Listbox(generated_page)
-    ingredient_listbox.place(x=235,y=70)
-
-    # Button to go back to the main page
-    back_to_main_button = Button(generated_page, text="Back to Main Page", command=generated_page.destroy)
-    back_to_main_button.place(x=10,y=10)
-
-    # Set the current page to the generated page
-    generated_pages.append(generated_page)
-
-class Application(Frame):
-    def __init__(self, master=None):
-        super().__init__(master)
-        self.master = master
-        self.master.title("Random Recipe Generator")
-        self.master.geometry("600x400+340+160")
-        self.create_widgets()
-
-    def create_widgets(self):
-        self.bg_image = self.load_image("logo.png", (650, 400))
-        self.bg_label = Label(self.master, image=self.bg_image)
+        # Create a label to display the background image
+        self.bg_label = Label(app, image=self.bg_image)
         self.bg_label.place(x=0, y=0, relwidth=1, relheight=1)
 
-        self.heading_label = Label(self.master, text="Random Recipe Generator", font=("Times New Roman", 20, "bold"), bg="white")
-        self.heading_label.place(x=250, y=0)
-
-        self.add_button = Button(self.master, text="Add a Recipe", command=self.add_recipe)
-        self.add_button.place(x=450, y=100)
-
-        self.find_button = Button(self.master, text="Find a Recipe", command=self.find_recipe)
-        self.find_button.place(x=450, y=160)
-
-    def load_image(self, path, size):
-        bg_image = Image.open(path)
-        bg_image = bg_image.resize(size)
-        return ImageTk.PhotoImage(bg_image)
-
-    def add_recipe(self):
-        add_recipe_window = Toplevel(self.master)
-        add_recipe_window.title("Add Recipe")
-        add_recipe_window.geometry("600x400+340+160")
-        self.add_bg_image(add_recipe_window)
-
-        # Your add_recipe GUI elements here
-
-    def find_recipe(self):
-        find_recipe_window = Toplevel(self.master)
-        find_recipe_window.title("Find Recipe")
-        find_recipe_window.geometry("600x400+340+160")
-        self.add_bg_image(find_recipe_window)
-
-        # Your find_recipe GUI elements here
-
-    def add_bg_image(self, window):
-        bg_label = Label(window, image=self.bg_image)
-        bg_label.place(x=0, y=0, relwidth=1, relheight=1)
-
-def main():
+if __name__ == "__main__":
+    # Create main window
     root = Tk()
-    app = Application(master=root)
-    app.mainloop()
+    root.title("Random Recipe Generator")
+    root.resizable(False, False)
+    icon_image = PhotoImage(file="logo.png")
+    root.iconphoto(True, icon_image)
+    home = Home(root)
+
+    #Heading
+    heading_label = Label(root, text="Random Recipe Generator", font=("Times New Roman", 20, "bold"), bg="white")
+    heading_label.place(x=250, y=0)
+
+    # Set window dimensions and position
+    window_width = 600
+    window_height = 400
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    x_position = (screen_width - window_width) // 2
+    y_position = (screen_height - window_height) // 2
+    root.geometry(f"{window_width}x{window_height}+{x_position}+{y_position}")
 
     # Add buttons
-    add_button = Button(root, text="Add a Recipe", command = add_recipe)
-    add_button.place(x=450,y=100)
+    add_button = Button(root, text="Add a Recipe", command=add_recipe)
+    add_button.place(x=450, y=100)
 
-    find_button = Button(root, text="Find a Recipe", command = find_recipe)
-    find_button.place(x=450,y=160)
+    find_button = Button(root, text="Find a Recipe", command=find_recipe)
+    find_button.place(x=450, y=160)
 
-if __name__ == "__main__":
-    main()
+    # Run the application
+    root.mainloop()
