@@ -1,19 +1,19 @@
 from tkinter import *
 from PIL import Image, ImageTk
 import sqlite3
-from tkinter import messagebox, ttk
+from tkinter import messagebox, ttk, Menu
 import re
 
 def create_home_button(parent_window, main_window):
     # Load and resize the image
-    image = Image.open("login_page.png")
+    image = Image.open("login_page_img.png")
     image = image.resize((20, 20))
 
     # Convert the image to a PhotoImage object
     photo = ImageTk.PhotoImage(image)
 
     # Adding icon
-    icon_image = PhotoImage(file="login_page.png")
+    icon_image = PhotoImage(file="login_page_img.png")
     main_window.iconphoto(True, icon_image)
 
     # Create a button with the image
@@ -28,7 +28,7 @@ def go_to_home(parent_window, main_window):
     main_window.deiconify()  # Restore main window if minimized
 
 class SignupPage:
-    def _init_ (self, master):
+    def __init__ (self, master):
         self.master = master
         master.title("Signup Page")
         master.geometry("900x550+0+0")  # Set the dimensions to 900x550
@@ -38,7 +38,7 @@ class SignupPage:
         self.create_table()
 
         # Load and resize the background image
-        bg_image = Image.open("login_page.png")
+        bg_image = Image.open("login_page_img.png")
         bg_image = bg_image.resize((900, 550))
         self.bg_image = ImageTk.PhotoImage(bg_image)
 
@@ -46,7 +46,7 @@ class SignupPage:
         photo = ImageTk.PhotoImage(bg_image)
 
         # Adding icon
-        icon_image = PhotoImage(file="login_page.png")
+        icon_image = PhotoImage(file="login_page_img.png")
         master.iconphoto(True, icon_image)
         master.iconbitmap(r"logo.png")
 
@@ -197,7 +197,7 @@ class ForgotPasswordPage:
 
 class LoginPage:
     login_page_instance = None
-    def _init_(self, master):
+    def __init__(self, master):
         self.master = master
         master.title("Login Page")
         master.geometry("900x550+0+0")  # Set the dimensions to 900x550
@@ -205,7 +205,7 @@ class LoginPage:
         self.logged_in_user_email = None  # Store the logged-in user's email
 
         # Load and resize the background image
-        bg_image = Image.open("login_page.png")
+        bg_image = Image.open("login_page_img.png")
         bg_image = bg_image.resize((900, 550))
         self.bg_image = ImageTk.PhotoImage(bg_image)
 
@@ -242,7 +242,7 @@ class LoginPage:
 
         # Forgot password link
         self.forgot_password_label = Label(master, text="Forgot Password?", font=("Times New Roman", 13), fg="blue", cursor="hand2",bg="white")
-        self.forgot_password_label.place(relx=0.75, rely=0.8, anchor=CENTER)
+        self.forgot_password_label.place(relx=0.8, rely=0.6, anchor=CENTER)
         self.forgot_password_label.bind("<Button-1>", self.forgot_password)
 
         # Don't have an account label
@@ -301,14 +301,13 @@ class LoginPage:
         app = SignupPage(root)
         root.mainloop()
 
-
 class HomePage:
-    def _init_(self, root):
+    def __init__(self, root):
         # Create main window
         root = Tk()
         root.title("Random Recipe Generator")
         root.resizable(False, False)
-        icon_image = PhotoImage(file="login_page.png")
+        icon_image = PhotoImage(file="login_page_img.png")
         root.iconphoto(True, icon_image)
         root.iconbitmap(r"logo.png")
 
@@ -334,12 +333,34 @@ class HomePage:
         root.geometry(f"{window_width}x{window_height}+{x_position}+{y_position}")
         geometry = f"900x550+{(root.winfo_screenwidth() - 900) // 2}+{(root.winfo_screenheight() - 550) // 2}"
 
+
         # Add buttons
         add_button = Button(root, text="Add a Recipe", command=add_recipe)
         add_button.place(x=650, y=170)
 
         find_button = Button(root, text="Find a Recipe", command=find_recipe)
         find_button.place(x=650, y=230)
+
+        # Add Account Button
+        account_button = Button(self.root, text="Account", command=self.open_account_menu)
+        account_button.place(x=770, y=20)
+
+        def open_account_menu(self):
+            # Create a new window for account options
+            account_window = Toplevel(self.root)
+            account_window.title("Account Options")
+
+            # Account information label
+            email_label = Label(account_window, text="Email: example@example.com", font=("Arial", 12))
+            email_label.pack()
+
+            # Button to view recipes
+            view_recipes_button = Button(account_window, text="View Recipes", command=self.view_recipes)
+            view_recipes_button.pack()
+
+        def view_recipes(self):
+            # Implement logic to view added recipes here
+            print("View Recipes command executed")
 
         # Run the application
         root.mainloop()
@@ -417,8 +438,8 @@ def add_recipe():
 
             # If user selects "Yes", store data in the 'Ingredients_and_Recipe_Dataset' table
             if publish_value == "Yes":
-                cursor.execute("INSERT INTO Ingredients_and_Recipe_Dataset (ID, RecipeName, Ingredients, Instructions) VALUES (?, ?, ?, ?)",
-                            (recipe_id, recipe_name, ingredients, instructions))
+                cursor.execute("INSERT INTO Ingredients_and_Recipe_Dataset (RecipeName, Ingredients, Instructions) VALUES (?, ?, ?)",
+                            ( recipe_name, ingredients, instructions))
                 con2.commit()
 
             con2.close()
@@ -534,7 +555,7 @@ def find_recipe():
         query = text_widget.get("1.0", "end-1c").strip().lower()  # Get user input and convert to lowercase
         if not query:
             error_label.config(text="Please enter a recipe name to search.", fg="red")
-            error_label.place(x=70, y=75)
+            error_label.place(x=30, y=35)
             return
         
         # Connect to the database and execute the query
@@ -584,6 +605,10 @@ def find_recipe():
     new_window.resizable(False, False)
 
     new_window.iconbitmap(r"logo.png")
+
+    global error_label
+    error_label = Label(new_window, text="", fg="red")
+    error_label.place(x=100, y=210)
     
     # Create home button
     #create_home_button(new_window, root)  # Pass main window reference
@@ -614,5 +639,5 @@ def main():
     app = LoginPage(root)
     root.mainloop()
 
-if __name__ == "_main_":
+if __name__ == "__main__":
     main()
