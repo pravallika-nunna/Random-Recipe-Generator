@@ -71,11 +71,9 @@ class SignupPage:
         self.password_entry = Entry(master, show="*", width=35,font=("Times New Roman", 11,),highlightbackground="orangered",  highlightcolor="red",highlightthickness=2)
         self.password_entry.place(relx=0.8, rely=0.55, anchor=CENTER)
 
-
         # Signup button
         self.signup_button = Button(master, text="Signup",font=("Times New Roman", 15), bg="yellow", command=self.signup, width=10)
         self.signup_button.place(relx=0.75, rely=0.7, anchor=CENTER)
-
 
         # Already a user label
         self.login_label = Label(master, text="Already an existing user?    |", font=("Times New Roman", 13), bg="white")
@@ -193,7 +191,6 @@ class ForgotPasswordPage:
 
         messagebox.showinfo("Success", "Password updated successfully!")
         self.master.destroy()
-
 
 class LoginPage:
     login_page_instance = None
