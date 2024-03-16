@@ -311,6 +311,14 @@ class HomePage:
         root.iconphoto(True, icon_image)
         root.iconbitmap(r"logo.png")
 
+
+        bg_image = Image.open("backie.png")
+        bg_image = bg_image.resize((870, 150))
+        self.bg_image = ImageTk.PhotoImage(bg_image)
+        bg_label = Label(root, image=self.bg_image)
+        bg_label.place(x=0, y=0, relwidth=1, relheight=0.3)  # Adjust the height as needed
+
+
         # Create a label for displaying error messages
         global error_label
         error_label = Label(root, text="", fg="red")
@@ -320,7 +328,7 @@ class HomePage:
         geometry = "900x550+0+0"
    
         #Heading
-        heading_label = Label(root, text="Random Recipe Generator", font=("Times New Roman", 20, "bold"), bg="white")
+        heading_label = Label(root, text="Random Recipe Generator", font=("Times New Roman", 20, "bold"),fg="gray")
         heading_label.place(x=510, y=90)
 
         # Set window dimensions and position
@@ -333,13 +341,12 @@ class HomePage:
         root.geometry(f"{window_width}x{window_height}+{x_position}+{y_position}")
         geometry = f"900x550+{(root.winfo_screenwidth() - 900) // 2}+{(root.winfo_screenheight() - 550) // 2}"
 
-
         # Add buttons
-        add_button = Button(root, text="Add a Recipe", command=add_recipe)
-        add_button.place(x=650, y=170)
+        add_button = Button(root, text="Add a Recipe",font=("Times New Roman", 15,"bold"), command=add_recipe, width=15,bg="gray",fg="white")
+        add_button.place(x=350, y=230)
 
-        find_button = Button(root, text="Find a Recipe", command=find_recipe)
-        find_button.place(x=650, y=230)
+        find_button = Button(root, text="Find a Recipe",font=("Times New Roman",15, "bold") ,command=find_recipe,width=15,bg="gray",fg="white")
+        find_button.place(x=350, y=350)
 
         # Add Account Button
         account_button = Button(self.root, text="Account", command=self.open_account_menu)
@@ -417,7 +424,6 @@ def add_recipe():
             error_label.place(x=405, y=370)
             return
         
-
         # Retrieve the logged-in user's email from the LoginPage instance
         email = LoginPage.login_page_instance.logged_in_user_email
 
@@ -430,16 +436,14 @@ def add_recipe():
             if not isinstance(email, str):
                 raise ValueError("Email must be a string")
 
-            cursor.execute("INSERT INTO Recipes (EmailId, RecipeName, Ingredients, Instructions) VALUES (?, ?, ?, ?)",
-                        (email, recipe_name, ingredients, instructions))
+            cursor.execute("INSERT INTO Recipes (EmailId, RecipeName, Ingredients, Instructions) VALUES (?, ?, ?, ?)",(email, recipe_name, ingredients, instructions))
             recipe_id = cursor.lastrowid
 
             con2.commit()
 
             # If user selects "Yes", store data in the 'Ingredients_and_Recipe_Dataset' table
             if publish_value == "Yes":
-                cursor.execute("INSERT INTO Ingredients_and_Recipe_Dataset (RecipeName, Ingredients, Instructions) VALUES (?, ?, ?)",
-                            ( recipe_name, ingredients, instructions))
+                cursor.execute("INSERT INTO Ingredients_and_Recipe_Dataset (RecipeName, Ingredients, Instructions) VALUES (?, ?, ?)",( recipe_name, ingredients, instructions))
                 con2.commit()
 
             con2.close()
@@ -474,16 +478,15 @@ def add_recipe():
         home_button = Button(new_window, text="Back", command=add_another_window.destroy)
         home_button.place(x=10, y=10)
 
-
         # Label to prompt user
         prompt_label = Label(add_another_window, text="Recipe added successfully!\nDo you want to add another recipe or view added recipes?")
         prompt_label.pack()
 
         # Buttons to add another recipe or view added recipes
-        add_another_button = Button(add_another_window, text="Add Another Recipe", command=add_recipe)
+        add_another_button = Button(add_another_window, text="Add Another Recipe", command=add_recipe,font=("Times New Roman", 13,"bold"), fg="white",bg="gray")
         add_another_button.pack()
 
-        view_recipes_button = Button(add_another_window, text="View Added Recipes", command=view_recipes)
+        view_recipes_button = Button(add_another_window, text="View Added Recipes", command=view_recipes,font=("Times New Roman", 13,"bold"), bg="gray",fg="white")
         view_recipes_button.pack()
 
      # Create the 'Recipes' table if it doesn't exist
@@ -504,60 +507,68 @@ def add_recipe():
     new_window.geometry(geometry)
     new_window.resizable(False, False)
     new_window.iconbitmap(r"logo.png")
-
+    
     global error_label
     error_label = Label(new_window, text="", fg="red")
     error_label.place(x=100, y=210)
-
+    
     # Your other GUI elements here
-    recipe_name_label = Label(new_window, text="Enter Recipe Name:")
-    recipe_name_label.place(x=200, y=80)
+    recipe_name_label = Label(new_window, text="Enter Recipe Name:",font=("Times New Roman", 13,"bold"), fg="gray")
+    recipe_name_label.place(x=190, y=80)
 
-    recipe_name_text = Text(new_window, width=25, height=1)
+    recipe_name_text = Text(new_window, width=35, height=1)
     recipe_name_text.place(x=350, y=80)
 
     # Your other GUI elements here
-    ingredients_label = Label(new_window, text="Enter Ingredients:")
-    ingredients_label.place(x=200, y=140)
+    ingredients_label = Label(new_window, text="Enter Ingredients:",font=("Times New Roman", 13,"bold"), fg="gray")
+    ingredients_label.place(x=190, y=140)
 
-    ingredients_text = Text(new_window, width=25, height=5)  # Set height to 5 for expanding box
+    ingredients_text = Text(new_window, width=35, height=5)  # Set height to 5 for expanding box
     ingredients_text.place(x=350, y=125)
 
     # Your other GUI elements here
-    instructions_label = Label(new_window, text="Enter Instructions:")
-    instructions_label.place(x=200, y=235)
+    instructions_label = Label(new_window, text="Enter Instructions:",font=("Times New Roman", 13,"bold"),fg="gray")
+    instructions_label.place(x=190, y=235)
 
-    instructions_text = Text(new_window, width=25, height=5)  # Set height to 5 for expanding box
+    instructions_text = Text(new_window, width=60, height=10)  # Set height to 5 for expanding box
     instructions_text.place(x=350, y=230)
 
     # Create a dropdown menu
-    publish_label = Label(new_window, text="Do you want to publish recipe?")
-    publish_label.place(x=180, y=340)
+    publish_label = Label(new_window, text="Do you want to publish recipe?",font=("Times New Roman", 13,"bold"),fg="gray")
+    publish_label.place(x=160, y=405)
 
     publish_options = ["No", "Yes"]
     publish_variable = StringVar(new_window)
     publish_variable.set(publish_options[0])  # Default value
 
     publish_menu = OptionMenu(new_window, publish_variable, *publish_options)
-    publish_menu.place(x=430, y=335)
+    publish_menu.place(x=410, y=405)
 
     home_button = Button(new_window, text="Back", command=new_window.destroy)
     home_button.place(x=10, y=10)
 
     # Submit Button
     browse_button = Button(new_window, text="Submit", command=add_recipe_to_db)
-    browse_button.place(x=430, y=380)
+    browse_button.place(x=435, y=475)
 
     new_window.mainloop()
 
 def find_recipe():
-    def search_recipe():
+    def update_entry_label(*args):
+        selected_option = search_var.get()
+        if selected_option == "ingredients":
+            entry_label.config(text="Enter Ingredients\nseparated by comma")
+        elif selected_option == "recipe_name":
+            entry_label.config(text="Enter Recipe Name")
+
+    def search_recipe(query):
         query = text_widget.get("1.0", "end-1c").strip().lower()  # Get user input and convert to lowercase
-        if not query:
-            error_label.config(text="Please enter a recipe name to search.", fg="red")
-            error_label.place(x=30, y=35)
-            return
+        search_option = search_var.get()  # Get the selected search option
         
+        if not query:
+            messagebox.showerror("Error", "Please enter a search query.")
+            return
+
         # Connect to the database and execute the query
         con = sqlite3.connect("recipe_generator.db")
         cursor = con.cursor()
@@ -568,15 +579,21 @@ def find_recipe():
         # Process the input query
         query_keywords = query.split(',')
 
-        # Search for matching recipes
+        # Search for matching recipes based on selected option
         found_recipes = []
         for recipe in all_recipes:
             recipe_name = recipe[1].lower()
             ingredients = recipe[2].lower().split(',')
             instructions = recipe[3].lower()
-            # Check if any ingredient or recipe title matches
-            if any(keyword.strip() in recipe_name or keyword.strip() in ingredients for keyword in query_keywords):
-                found_recipes.append(recipe)
+
+            if search_option == "ingredients":
+                # Check if any ingredient matches
+                if any(keyword.strip() in ingredients for keyword in query_keywords):
+                    found_recipes.append(recipe)
+            elif search_option == "recipe_name":
+                # Check if recipe name matches
+                if any(keyword.strip() in recipe_name for keyword in query_keywords):
+                    found_recipes.append(recipe)
 
         if not found_recipes:
             messagebox.showinfo("No Results", "No recipes found matching the search criteria.")
@@ -596,8 +613,57 @@ def find_recipe():
             home_button = Button(result_window, text="Back", command=result_window.destroy)
             home_button.place(x=400, y=500)
 
-        # Clear the error message
-        error_label.config(text="")
+    def search_ingredients(query):
+        # Connect to the database and execute the query
+        con = sqlite3.connect("recipe_generator.db")
+        cursor = con.cursor()
+        cursor.execute("SELECT * FROM Ingredients_and_Recipe_Dataset")
+        all_recipes = cursor.fetchall()
+
+        # Process the input query
+        query_keywords = query.split(',')
+
+        # Search for matching recipes based on ingredients
+        found_recipes = []
+        for recipe in all_recipes:
+            ingredients = recipe[2].lower()  # Get the string of ingredients
+            if any(keyword.strip() in ingredients for keyword in query_keywords):
+                found_recipes.append(recipe)
+
+        con.close()
+
+        if not found_recipes:
+            messagebox.showinfo("No Results", "No recipes found matching the search criteria.")
+        else:
+            # Display found recipes in a new window
+            result_window = Toplevel()
+            result_window.title("Search Results")
+            result_window.geometry(geometry)
+            result_window.resizable(False, False)
+
+            result_text = Text(result_window, width=100, height=50)
+            result_text.pack()
+
+            for recipe in found_recipes:
+                result_text.insert(END, f"Recipe Name: {recipe[1]}\nIngredients: {recipe[2]}\nInstructions: {recipe[3]}\n\n")
+
+            home_button = Button(result_window, text="Back", command=result_window.destroy)
+            home_button.place(x=400, y=500)
+        
+    def submit_search():
+        search_option = search_var.get()  # Get the selected search option
+        query = text_widget.get("1.0", "end-1c").strip().lower()  # Get user input and convert to lowercase
+
+        if not query:
+            messagebox.showerror("Error", "Please enter a search query.")
+            return
+
+        if search_option == "ingredients":
+            search_ingredients(query)
+        elif search_option == "recipe_name":
+            # Open a different search page for recipe names
+            #messagebox.showinfo("Info", "Search by Recipe Name is not yet implemented.")
+            search_recipe(query)
 
     new_window = Toplevel()
     new_window.title("Find Recipe")
@@ -606,31 +672,37 @@ def find_recipe():
 
     new_window.iconbitmap(r"logo.png")
 
-    global error_label
-    error_label = Label(new_window, text="", fg="red")
-    error_label.place(x=100, y=210)
-    
-    # Create home button
-    #create_home_button(new_window, root)  # Pass main window reference
+    bg_image = Image.open("backie.png")
+    bg_image = bg_image.resize((900, 150))  # Adjust size as needed
+    bg_photo = ImageTk.PhotoImage(bg_image)
+    bg_label = Label(new_window, image=bg_photo)
+    bg_label.place(x=0, y=0, relwidth=1, relheight=0.3)
 
     home_button = Button(new_window, text="Back", command=new_window.destroy)
     home_button.place(x=10, y=10)
 
-    # Your other GUI elements here
-    label = Label(new_window, text="Search Here :")
-    label.place(x=125, y=60)
+    label = Label(new_window, text="Search Through:", font=("Times New Roman", 16, "bold"), fg="black")
+    label.place(x=100, y=170)
 
-    # Ingredient Entry
-    ingredient_label = Label(new_window, text="(Enter an Ingredient / Recipe name)")
-    ingredient_label.place(x=100, y=100)
+    # Dropdown menu for search options
+    search_var = StringVar(new_window)
+    search_var.set("ingredients")  # default value
+    search_var.trace_add('write', update_entry_label)  # Track changes in the dropdown selection
+    search_dropdown = OptionMenu(new_window, search_var, "ingredients", "recipe_name")
+    search_dropdown.config(font=("Times New Roman", 12, "bold"), fg="black")
+    search_dropdown.place(x=260, y=170)
 
-    # Create a Text widget to display file contents
-    text_widget = Text(new_window, width=15, height=1)
-    text_widget.place(x=215, y=60)
+    # Entry label based on selected search option
+    entry_label = Label(new_window, text="Enter Ingredients \nseparated by comma", font=("Times New Roman", 13, "bold"), fg="black")
+    entry_label.place(x=185, y=230)
 
-    # Buttons
-    generate_button = Button(new_window, text="Generate Recipe", command=search_recipe)
-    generate_button.place(x=205, y=145)
+    # Create a Text widget to accept user input
+    text_widget = Text(new_window, width=35, height=2)
+    text_widget.place(x=380, y=230)
+
+    # Submit button
+    submit_button = Button(new_window, text="Submit", command=submit_search, font=("Times New Roman", 15, "bold"), bg="gray", fg="white")
+    submit_button.place(x=350, y=300)
 
     new_window.mainloop()
 
